@@ -4,12 +4,12 @@ services:
     restart: unless-stopped
     init: true
     environment:
-      PublicUrl: ${PUBLIC_URL:-http://localhost:6968}
-      Storage__MaxFileBytes: ${MAX_FILE_BYTES:-104857600}
-      Storage__QuotaBytes: ${STORAGE_QUOTA_BYTES:-10737418240}
+      PublicUrl: ${PUBLIC_URL:?Set PUBLIC_URL in .env}
+      Storage__MaxFileBytes: ${MAX_FILE_BYTES:?Set MAX_FILE_BYTES in .env}
+      Storage__QuotaBytes: ${STORAGE_QUOTA_BYTES:?Set STORAGE_QUOTA_BYTES in .env}
       Storage__UploadKey: ${UPLOAD_KEY:-}
     ports:
-      - "6968:6968"
+      - "${HTTP_PORT:?Set HTTP_PORT in .env}:6968"
     volumes:
       - files:/data
     read_only: true

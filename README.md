@@ -11,17 +11,20 @@ cp .env.example .env
 docker compose up -d --build --remove-orphans
 ```
 
-Open **http://localhost:6968**. The application listens directly on HTTP port **6968**, published as `6968:6968`. Compose runs **only the .NET app**; it does not pull, build, or run Caddy. The build downloads the .NET base images.
+Open **http://localhost:6968**. The default public HTTP port is **6968**, controlled by `HTTP_PORT` in `.env`; the container listens on port 6968 internally. Compose runs **only the .NET app**; it does not pull, build, or run Caddy. The build downloads the .NET base images.
 
 ### VPS over HTTP
 
-In `.env`, set the address visitors will use, including port 6968:
+Compose automatically reads `.env` next to `compose.yaml` for variable substitution. The public port, public URL, file-size limit, storage budget, and optional upload key are configured there; no edits to `compose.yaml` are needed. Missing required values produce a clear configuration error. Shell environment variables take precedence over `.env`, as usual with Compose. To select another settings file explicitly, use `docker compose --env-file /path/to/settings.env up -d --build`.
+
+In `.env`, set the public HTTP port and address visitors will use:
 
 ```dotenv
+HTTP_PORT=6968
 PUBLIC_URL=http://YOUR_VPS_IP:6968
 ```
 
-You can also use `http://files.example.com:6968` after pointing its DNS records at the VPS. Allow inbound TCP **6968** in the VPS firewall. Run `docker compose up -d --build --remove-orphans`, then visit that exact URL. `PUBLIC_URL` controls generated download links, Discord metadata, and browser upload-origin checks. Update it if you previously used port 8080 or HTTPS. No domain or TLS certificate is required for this HTTP setup.
+You can also use `http://files.example.com:6968` after pointing its DNS records at the VPS. Allow inbound TCP **6968** in the VPS firewall (or your configured `HTTP_PORT`). Run `docker compose up -d --build --remove-orphans`, then visit that exact URL. `PUBLIC_URL` controls generated download links, Discord metadata, and browser upload-origin checks. If you change `HTTP_PORT`, update the port in `PUBLIC_URL` to match. Update `PUBLIC_URL` if you previously used port 8080 or HTTPS. No domain or TLS certificate is required for this HTTP setup.
 
 `--remove-orphans` also removes the previous Compose-managed Caddy container when upgrading. Uploaded files remain in the existing `files` volume. Old Caddy certificate volumes are not deleted automatically.
 
