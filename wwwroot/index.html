@@ -3,74 +3,50 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Upload a file, get a link, and share it. Simple, lossless file hosting with m5rcel’s awesome file hoster.">
+  <meta name="description" content="Upload and share files with m5rcel’s awesome file hoster.">
   <meta name="theme-color" content="#2875a8">
-  <title>m5rcel’s awesome file hoster · Simple files. Easy sharing.</title>
+  <title>m5rcel’s awesome file hoster</title>
   <link rel="stylesheet" href="/vendor/7.css">
   <link rel="stylesheet" href="/site.css">
   <script src="/share.js" defer></script>
   <script src="/upload.js" defer></script>
 </head>
 <body>
-  <header class="site-header">
-    <nav class="shell" aria-label="Main navigation">
-      <a href="/" class="brand">m5rcel’s awesome file hoster</a>
-      <a href="#how-it-works">How it works</a>
-    </nav>
-  </header>
+  <header class="shell"><h1>m5rcel’s awesome file hoster</h1></header>
   <main class="shell">
-    <section class="intro">
-      <p class="eyebrow">A LITTLE HOME FOR YOUR FILES</p>
-      <h1>Drop a file.<br>Share the link.</h1>
-      <p class="lead">From your device to anywhere.<br>Simple uploads, smaller storage, and one easy link.</p>
-    </section>
-    <section aria-labelledby="upload-heading">
-      <fieldset id="drop-zone">
-        <legend id="upload-heading">Upload a file</legend>
-        <div class="upload-content">
-          <h2>Drag & drop your file here</h2>
-          <p>Or choose one from your device.</p>
-          <input type="file" id="file-input" hidden>
-          <button type="button" id="browse" disabled>Choose a file…</button>
-          <p class="muted" id="limits">Connecting to the server…</p>
-        </div>
-        <div id="selection" hidden>
-          <div class="selection-row"><div><strong id="file-name"></strong><p class="muted" id="file-size"></p></div><button type="button" id="clear">Remove</button></div>
-          <div id="key-field" hidden><label for="upload-key">Upload key</label><input type="password" id="upload-key" autocomplete="off"><p class="muted">This host requires a key to upload. Ask the administrator for access.</p></div>
-          <div class="actions"><button type="button" class="default" id="upload">Upload file</button><span class="muted">Your original file stays intact.</span></div>
-        </div>
-        <div id="upload-progress" hidden>
-          <p id="progress-label">Uploading…</p>
-          <div role="progressbar" aria-label="Upload progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-fill"></div></div>
-          <p class="muted">Keep this page open while your file is uploaded and processed.</p>
-        </div>
-        <p id="status" role="status" aria-live="polite"></p>
-      </fieldset>
-      <fieldset id="result" hidden>
-        <legend>Your file is ready</legend>
-        <h2>Uploaded. Packed. Ready to share.</h2>
-        <p id="result-details"></p>
-        <label for="direct-link">Direct download link</label>
-        <div class="link-row"><input type="text" id="direct-link" readonly><button type="button" data-copy="direct-link">Copy link</button></div>
-        <label for="share-link">Share page · best for Discord</label>
-        <div class="link-row"><input type="text" id="share-link" readonly><button type="button" data-copy="share-link">Copy link</button></div>
-        <p id="copy-status" role="status"></p>
-        <div class="actions"><a id="open-file" href="#">Open share page →</a><button type="button" id="another">Upload another file</button></div>
-      </fieldset>
-      <p class="upload-note">No account needed. Anyone with the link can download your file.</p>
-      <noscript><p>Enable JavaScript to upload. Shared files can be downloaded without JavaScript.</p></noscript>
-    </section>
-    <section class="explanation" id="how-it-works" aria-labelledby="how-heading">
-      <p class="eyebrow">THREE STEPS. THAT’S IT.</p>
-      <h2 id="how-heading">Less fuss. More sharing.</h2>
-      <div class="steps">
-        <section><h3>01. Pick your file</h3><p>A document, a photo, a project. Drag it in or choose it from your device.</p></section>
-        <section><h3>02. We pack it up</h3><p>Lossless compression saves space where it can. Your file keeps every byte.</p></section>
-        <section><h3>03. Send it along</h3><p>Copy a download link or share a page with a preview made for Discord.</p></section>
+    <p>Upload a file, then copy its download or share link.</p>
+    <fieldset id="drop-zone">
+      <legend>Upload a file</legend>
+      <p>Drop a file here or choose one from your device.</p>
+      <input type="file" id="file-input" hidden>
+      <button type="button" id="browse" disabled>Choose a file…</button>
+      <p id="limits">Connecting to the server…</p>
+      <div id="selection" hidden>
+        <div class="selection-row"><div><strong id="file-name"></strong><p id="file-size"></p></div><button type="button" id="clear">Remove</button></div>
+        <div id="key-field" hidden><label for="upload-key">Upload key</label><input type="password" id="upload-key" autocomplete="off"><p>Ask the administrator for the upload key.</p></div>
+        <p><button type="button" id="upload">Upload file</button></p>
       </div>
-      <details><summary>A few things to know</summary><p>Files are stored on this host until its administrator removes them. Keep a backup of anything important. Links are unlisted, but they are not password protected.</p><p>Already compressed files, such as ZIPs, JPEGs, and videos, may not get smaller. Downloads always return the original file. Image previews are available for recognized PNG, JPEG, GIF, and WebP files up to 20 MB. Discord controls whether and when a preview appears.</p></details>
-    </section>
+      <div id="upload-progress" hidden>
+        <p id="progress-label">Uploading…</p>
+        <div role="progressbar" aria-label="Upload progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-fill"></div></div>
+        <p>Keep this page open until processing finishes.</p>
+      </div>
+      <p id="status" role="status" aria-live="polite"></p>
+    </fieldset>
+    <fieldset id="result" hidden>
+      <legend>Upload complete</legend>
+      <p id="result-details"></p>
+      <label for="direct-link">Direct download</label>
+      <div class="link-row"><input type="text" id="direct-link" readonly><button type="button" data-copy="direct-link">Copy link</button></div>
+      <label for="share-link">Share page (for Discord previews)</label>
+      <div class="link-row"><input type="text" id="share-link" readonly><button type="button" data-copy="share-link">Copy link</button></div>
+      <p id="copy-status" role="status"></p>
+      <div class="actions"><a id="open-file" href="#">Open share page</a><button type="button" id="another">Upload another file</button></div>
+    </fieldset>
+    <p>Lossless compression saves space when possible. Downloads keep the original file.</p>
+    <p>Anyone with the link can download. Keep a backup of important files.</p>
+    <noscript><p>Enable JavaScript to upload. Downloads work without it.</p></noscript>
   </main>
-  <footer class="shell"><span>m5rcel’s awesome file hoster · Simple files. Easy sharing.</span><span>Styled with <a href="https://khang-nd.github.io/7.css/">7.css</a></span></footer>
+  <footer class="shell"><a href="https://khang-nd.github.io/7.css/">7.css</a></footer>
 </body>
 </html>

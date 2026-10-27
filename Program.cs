@@ -104,9 +104,7 @@ app.MapGet("/f/{id}", async (string id, HttpContext ctx, Storage storage) =>
     <meta name="description" content="{E(description)}">
     """;
     string content = $"""
-    <p class="eyebrow">READY TO DOWNLOAD</p>
-    <h1 class="filename">{E(f.Name)}</h1>
-    <p>The file you need. Just one click away.</p>
+    <h1>{E(f.Name)}</h1>
     {(image ? $"<img class=\"file-preview\" src=\"/preview/{f.Id}\" alt=\"Preview of {E(f.Name)}\">" : "")}
     <fieldset><legend>File details</legend><dl class="details">
     <dt>Original size</dt><dd>{FormatSize(f.Size)}</dd>
@@ -114,14 +112,14 @@ app.MapGet("/f/{id}", async (string id, HttpContext ctx, Storage storage) =>
     <dt>Storage</dt><dd>{(f.Compressed ? $"Losslessly compressed · {100 * (1 - (double)f.StoredSize / f.Size):0}% smaller" : "Original · already compact")}</dd>
     <dt>SHA-256</dt><dd class="hash">{f.Sha256}</dd></dl>
     <p>Downloads preserve the original filename and bytes.</p>
-    <a class="download-link" href="{E(DownloadUrl(f))}">Download {E(f.Name)}</a></fieldset>
+    <a href="{E(DownloadUrl(f))}">Download {E(f.Name)}</a></fieldset>
     <fieldset><legend>Share this file</legend>
-    <label for="share-link">Share page · includes a Discord preview</label>
+    <label for="share-link">Share page (for Discord previews)</label>
     <div class="link-row"><input id="share-link" type="text" readonly value="{E(share)}"><button type="button" data-copy="share-link">Copy link</button></div>
     <label for="direct-link">Direct download</label>
     <div class="link-row"><input id="direct-link" type="text" readonly value="{E(DownloadUrl(f))}"><button type="button" data-copy="direct-link">Copy link</button></div>
     <p id="copy-status" role="status"></p></fieldset>
-    <p>Only download files from people you trust. <a href="/">Upload your own file →</a></p>
+    <p>Only download files from people you trust. <a href="/">Upload a file</a></p>
     """;
     return Results.Content(Page(f.Name, content, meta), "text/html; charset=utf-8");
 });
@@ -133,6 +131,6 @@ static string FormatSize(long n) => n >= 1048576 ? $"{n / 1048576d:0.##} MB" : n
 static string Page(string title, string content, string meta) => $"""
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{E(title)} · m5rcel’s awesome file hoster</title>{meta}<link rel="stylesheet" href="/vendor/7.css"><link rel="stylesheet" href="/site.css"><script src="/share.js" defer></script></head>
-<body><header class="site-header"><nav class="shell"><a class="brand" href="/">m5rcel’s awesome file hoster</a><a href="/">Upload a file</a></nav></header>
-<main class="shell share-page">{content}</main><footer class="shell">m5rcel’s awesome file hoster · Simple files. Easy sharing.</footer></body></html>
+<body><header class="shell"><p><a href="/">m5rcel’s awesome file hoster</a></p></header>
+<main class="shell">{content}</main><footer class="shell"><a href="https://khang-nd.github.io/7.css/">7.css</a></footer></body></html>
 """;
