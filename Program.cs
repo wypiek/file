@@ -15,7 +15,7 @@ builder.Services.AddRateLimiter(o =>
         options.QueueLimit = 0;
     });
 });
-string publicUrl = builder.Configuration["PublicUrl"] ?? "http://localhost:8080";
+string publicUrl = builder.Configuration["PublicUrl"] ?? "http://localhost:6968";
 if (!Uri.TryCreate(publicUrl, UriKind.Absolute, out var origin) || origin.Scheme is not ("https" or "http") || origin.AbsolutePath != "/" || origin.Query.Length != 0 || origin.Fragment.Length != 0 || origin.UserInfo.Length != 0)
     throw new InvalidOperationException("PublicUrl must be an absolute HTTP(S) origin without a path.");
 publicUrl = origin.GetLeftPart(UriPartial.Authority).TrimEnd('/');

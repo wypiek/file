@@ -8,23 +8,26 @@ Requires Docker Engine with Compose v2 and BuildKit. From this directory:
 
 ```sh
 cp .env.example .env
-docker compose up -d --build
+docker compose up -d --build --remove-orphans
 ```
 
-Open **http://localhost:8080**. The first build compiles Caddy from pinned Go module source; it can take several minutes. **Compose never pulls a Caddy image**: there is no `image: caddy` or `FROM caddy`. It does download the .NET, Go, and Alpine base images and Go modules needed to build.
+Open **http://localhost:6968**. The application listens directly on HTTP port **6968**, published as `6968:6968`. Compose runs **only the .NET app**; it does not pull, build, or run Caddy. The build downloads the .NET base images.
 
-### Public server with automatic HTTPS
+### VPS over HTTP
 
-Point a domain's A/AAAA records at your server. In `.env`, set:
+In `.env`, set the address visitors will use, including port 6968:
 
 ```dotenv
-PUBLIC_URL=https://files.example.com
-SITE_ADDRESS=files.example.com
-HTTP_PORT=80
-HTTPS_PORT=443
+PUBLIC_URL=http://YOUR_VPS_IP:6968
 ```
 
-Allow inbound TCP 80/443 (and optionally UDP 443 for HTTP/3), then run `docker compose up -d --build`. Caddy obtains and renews TLS certificates. Optionally set a certificate contact email in `deploy/Caddyfile`. Keep both Caddy volumes so certificates survive restarts. `PUBLIC_URL` must match the URL visitors use, including scheme and port; it controls generated links, Discord metadata, and browser upload-origin checks. Use an origin without a path. Never expose the app container directly on an internet-facing port.
+You can also use `http://files.example.com:6968` after pointing its DNS records at the VPS. Allow inbound TCP **6968** in the VPS firewall. Run `docker compose up -d --build --remove-orphans`, then visit that exact URL. `PUBLIC_URL` controls generated download links, Discord metadata, and browser upload-origin checks. Update it if you previously used port 8080 or HTTPS. No domain or TLS certificate is required for this HTTP setup.
+
+`--remove-orphans` also removes the previous Compose-managed Caddy container when upgrading. Uploaded files remain in the existing `files` volume. Old Caddy certificate volumes are not deleted automatically.
+
+### Optional: separately managed Caddy
+
+If you later want HTTPS, install or manage Caddy separately and adapt `deploy/Caddyfile` for your domain. It proxies to `127.0.0.1:6968`. Set `PUBLIC_URL=https://your-domain` and allow TCP 80/443 for that separate Caddy instance. Caddy is never included in this project's Compose configuration.
 
 To restrict uploads, set a long random `UPLOAD_KEY` in `.env` and recreate the services. The page prompts for the key; it is sent in a header, never a URL or stored in browser storage. Downloads and previews remain public to anyone who knows the link. For an internet-facing instance, an upload key is recommended unless you intend to accept anonymous uploads. There is no moderation service or malware scanner.
 
@@ -42,7 +45,7 @@ To restrict uploads, set a long random `UPLOAD_KEY` in `.env` and recreate the s
 
 The result includes a direct download URL (`/d/id/filename`) and a share page (`/f/id`). **Paste the share page into Discord** for the embed. Share pages render Open Graph title, filename, original size, image, canonical URL, and theme color on the server, without requiring JavaScript or authentication.
 
-PNG, JPEG, GIF, and WebP files recognized by their signatures get inline image previews up to 20 MiB. Other files use a bundled m5rcel’s awesome file hoster image. Arbitrary uploads, including HTML and SVG, are only served as attachments, never executable site content. Discord must be able to reach the host publicly over HTTPS. Discord may cache, suppress, or reject previews, including malformed images; rendering is ultimately controlled by Discord. Direct download URLs are for downloading; they are not embed pages. There are no video players or document renderers.
+PNG, JPEG, GIF, and WebP files recognized by their signatures get inline image previews up to 20 MiB. Other files use a bundled m5rcel’s awesome file hoster image. Arbitrary uploads, including HTML and SVG, are only served as attachments, never executable site content. Discord must be able to reach the public share page and its preview image; localhost and private VPS addresses will not work. Discord may cache, suppress, or reject previews, including malformed images; rendering is ultimately controlled by Discord. Direct download URLs are for downloading; they are not embed pages. There are no video players or document renderers.
 
 ## Maintain
 
@@ -50,19 +53,19 @@ PNG, JPEG, GIF, and WebP files recognized by their signatures get inline image p
 docker compose logs -f --tail=100
 docker compose ps
 docker compose up -d --build    # rebuild after source/base-image updates
-docker compose down            # preserves files and TLS volumes
+docker compose down            # preserves uploaded files
 ```
 
-Do not use `down -v` unless you intend to erase every uploaded file and certificate. Back up the whole files volume, including JSON metadata and blobs. To remove a file, stop the app, delete its `<id>.json` and `<id>.blob` together from that volume, and restart. Stopping the app also ensures a consistent backup and recalculates quota usage after manual changes. Treat file links as bearer secrets, not private authenticated storage. Back up important originals separately.
+Do not use `down -v` unless you intend to erase every uploaded file. Back up the whole files volume, including JSON metadata and blobs. To remove a file, stop the app, delete its `<id>.json` and `<id>.blob` together from that volume, and restart. Stopping the app also ensures a consistent backup and recalculates quota usage after manual changes. Treat file links as bearer secrets, not private authenticated storage. Back up important originals separately.
 
-Check app liveness at `/healthz`. It is a process check, not an exhaustive disk health test. Monitor host disk usage and logs. To update Caddy, change the `CADDY_VERSION` build argument default in `deploy/Caddy.Dockerfile`, rebuild, and test. Vendored 7.css is MIT licensed; its original license is in `wwwroot/vendor/7.css.LICENSE`.
+Check app liveness at `/healthz`. It is a process check, not an exhaustive disk health test. Monitor host disk usage and logs. Vendored 7.css is MIT licensed; its original license is in `wwwroot/vendor/7.css.LICENSE`.
 
 ## Develop and verify without Docker
 
 Install the .NET 10 SDK:
 
 ```sh
-dotnet run --urls http://localhost:8080
+dotnet run --urls http://localhost:6968
 ```
 
 Local data goes in `./data`. Configuration uses normal .NET environment variables: `PublicUrl`, `Storage__Path`, `Storage__MaxFileBytes`, `Storage__QuotaBytes`, and `Storage__UploadKey`. The `.env` file is read by Compose, not by `dotnet run`.

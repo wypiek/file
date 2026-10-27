@@ -1,12 +1,8 @@
-{
-    # Optional: email you@example.com
-    admin off
-}
-
-{$SITE_ADDRESS:80} {
+# Optional: use with Caddy installed separately on the VPS.
+# Replace the domain and set PUBLIC_URL=https://files.example.com in .env.
+# Docker Compose runs only the app on HTTP port 6968.
+files.example.com {
     encode zstd gzip
-    reverse_proxy app:8080
-    header {
-        -Server
-    }
+    reverse_proxy 127.0.0.1:6968
+    header -Server
 }
