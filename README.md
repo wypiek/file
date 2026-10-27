@@ -1,4 +1,4 @@
-# FileHarbor
+# m5rcel’s awesome file hoster
 
 A small .NET 10 file host. Drag in one file, upload it, and copy the link. Regular responsive website layout, with vendored 7.css 0.21.1 controls and no window/desktop UI. No database, JavaScript packages, or external storage services.
 
@@ -42,7 +42,7 @@ To restrict uploads, set a long random `UPLOAD_KEY` in `.env` and recreate the s
 
 The result includes a direct download URL (`/d/id/filename`) and a share page (`/f/id`). **Paste the share page into Discord** for the embed. Share pages render Open Graph title, filename, original size, image, canonical URL, and theme color on the server, without requiring JavaScript or authentication.
 
-PNG, JPEG, GIF, and WebP files recognized by their signatures get inline image previews up to 20 MiB. Other files use a bundled FileHarbor image. Arbitrary uploads, including HTML and SVG, are only served as attachments, never executable site content. Discord must be able to reach the host publicly over HTTPS. Discord may cache, suppress, or reject previews, including malformed images; rendering is ultimately controlled by Discord. Direct download URLs are for downloading; they are not embed pages. There are no video players or document renderers.
+PNG, JPEG, GIF, and WebP files recognized by their signatures get inline image previews up to 20 MiB. Other files use a bundled m5rcel’s awesome file hoster image. Arbitrary uploads, including HTML and SVG, are only served as attachments, never executable site content. Discord must be able to reach the host publicly over HTTPS. Discord may cache, suppress, or reject previews, including malformed images; rendering is ultimately controlled by Discord. Direct download URLs are for downloading; they are not embed pages. There are no video players or document renderers.
 
 ## Maintain
 

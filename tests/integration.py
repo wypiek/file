@@ -13,9 +13,9 @@ from urllib.parse import quote, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 DOTNET = os.environ.get('DOTNET', 'dotnet')
 subprocess.run([DOTNET, 'build', '-c', 'Release', '--nologo'], cwd=ROOT, check=True)
-DLL = ROOT / 'bin/Release/net10.0/FileHarbor.dll'
+DLL = ROOT / 'bin/Release/net10.0/FileHost.dll'
 
-with tempfile.TemporaryDirectory(prefix='fileharbor-test-') as tmp:
+with tempfile.TemporaryDirectory(prefix='file-host-test-') as tmp:
     with socket.socket() as sock:
         sock.bind(('127.0.0.1', 0))
         port = sock.getsockname()[1]
@@ -71,7 +71,7 @@ with tempfile.TemporaryDirectory(prefix='fileharbor-test-') as tmp:
         assert request('GET', '/preview/invalid')[0] == 404
         saved = []
         for name, content, compressed in [
-            ('notes.txt', b'FileHarbor lossless test\n' * 2000, True),
+            ('notes.txt', b'FileHost lossless test\n' * 2000, True),
             ('random.bin', os.urandom(16000), False),
             ('../<script>alert(1)</script>.html', b'<script>alert(1)</script>', False),
             ('hello ☃.txt', b'hello snowman', False),

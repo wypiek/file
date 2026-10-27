@@ -90,11 +90,11 @@ app.MapGet("/f/{id}", async (string id, HttpContext ctx, Storage storage) =>
     if (f is null) return Results.Content(Page("File not found", "<h1>File not found</h1><p>This link is invalid or the file has been removed.</p><a href=\"/\">Return to uploads</a>", ""), "text/html", statusCode: 404);
     string share = $"{publicUrl}/f/{f.Id}";
     bool image = f.Mime.StartsWith("image/") && f.Size <= 20 * 1024 * 1024;
-    string description = $"{FormatSize(f.Size)} · Download the original file from FileHarbor. No account needed.";
+    string description = $"{FormatSize(f.Size)} · Download the original file from m5rcel’s awesome file hoster. No account needed.";
     string preview = image ? $"{publicUrl}/preview/{f.Id}" : $"{publicUrl}/embed.png";
     string meta = $"""
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="FileHarbor">
+    <meta property="og:site_name" content="m5rcel’s awesome file hoster">
     <meta property="og:title" content="{E(f.Name)}">
     <meta property="og:description" content="{E(description)}">
     <meta property="og:url" content="{E(share)}">
@@ -132,7 +132,7 @@ static string E(string s) => WebUtility.HtmlEncode(s);
 static string FormatSize(long n) => n >= 1048576 ? $"{n / 1048576d:0.##} MB" : n >= 1024 ? $"{n / 1024d:0.##} KB" : $"{n} bytes";
 static string Page(string title, string content, string meta) => $"""
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{E(title)} · FileHarbor</title>{meta}<link rel="stylesheet" href="/vendor/7.css"><link rel="stylesheet" href="/site.css"><script src="/share.js" defer></script></head>
-<body><header class="site-header"><nav class="shell"><a class="brand" href="/">FileHarbor</a><a href="/">Upload a file</a></nav></header>
-<main class="shell share-page">{content}</main><footer class="shell">FileHarbor · Simple files. Easy sharing.</footer></body></html>
+<title>{E(title)} · m5rcel’s awesome file hoster</title>{meta}<link rel="stylesheet" href="/vendor/7.css"><link rel="stylesheet" href="/site.css"><script src="/share.js" defer></script></head>
+<body><header class="site-header"><nav class="shell"><a class="brand" href="/">m5rcel’s awesome file hoster</a><a href="/">Upload a file</a></nav></header>
+<main class="shell share-page">{content}</main><footer class="shell">m5rcel’s awesome file hoster · Simple files. Easy sharing.</footer></body></html>
 """;
